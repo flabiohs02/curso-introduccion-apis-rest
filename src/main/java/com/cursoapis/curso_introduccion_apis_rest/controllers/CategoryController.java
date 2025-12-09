@@ -1,7 +1,6 @@
 package com.cursoapis.curso_introduccion_apis_rest.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cursoapis.curso_introduccion_apis_rest.dto.CategoryDTO;
-import com.cursoapis.curso_introduccion_apis_rest.entity.Category;
 import com.cursoapis.curso_introduccion_apis_rest.mapper.CategoryMapper;
 import com.cursoapis.curso_introduccion_apis_rest.service.CategoryService;
 
@@ -26,46 +24,39 @@ import jakarta.validation.Valid;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final CategoryMapper categoryMapper;
 
     public CategoryController(CategoryService categoryService, CategoryMapper categoryMapper) {
         this.categoryService = categoryService;
-        this.categoryMapper = categoryMapper;
     }
 
     @GetMapping
     public ResponseEntity<List<CategoryDTO>> findAll() {
-        List<CategoryDTO> categories = categoryService.findAll()
-                .stream()
-                .map(categoryMapper::toDTO)
-                .collect(Collectors.toList());
+        List<CategoryDTO> categories = categoryService.findAll();
         return ResponseEntity.ok(categories);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDTO> findById(@PathVariable Long id) {
-        Category category = categoryService.findById(id);
-        return ResponseEntity.ok(categoryMapper.toDTO(category));
+        CategoryDTO category = categoryService.findById(id);
+        return ResponseEntity.ok(category);
     }
 
     @GetMapping("/name/{name}")
     public ResponseEntity<CategoryDTO> findByName(@PathVariable String name) {
-        Category category = categoryService.findByName(name);
-        return ResponseEntity.ok(categoryMapper.toDTO(category));
+        CategoryDTO category = categoryService.findByName(name);
+        return ResponseEntity.ok(category);
     }
 
     @PostMapping
     public ResponseEntity<CategoryDTO> save(@Valid @RequestBody CategoryDTO categoryDTO) {
-        Category category = categoryMapper.toEntity(categoryDTO);
-        Category savedCategory = categoryService.save(category);
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoryMapper.toDTO(savedCategory));
+        CategoryDTO category = categoryService.save(categoryDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(category);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDTO> update(@PathVariable Long id, @Valid @RequestBody CategoryDTO categoryDTO) {
-        Category category = categoryMapper.toEntity(categoryDTO);
-        Category updatedCategory = categoryService.update(id, category);
-        return ResponseEntity.ok(categoryMapper.toDTO(updatedCategory));
+        CategoryDTO category = categoryService.update(id, categoryDTO);
+        return ResponseEntity.ok(category);
     }
 
     @DeleteMapping("/{id}")

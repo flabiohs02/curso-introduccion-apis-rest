@@ -1,12 +1,15 @@
 package com.cursoapis.curso_introduccion_apis_rest.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.cursoapis.curso_introduccion_apis_rest.service.CategoryService;
 import com.cursoapis.curso_introduccion_apis_rest.exception.DuplicateResourceException;
 import com.cursoapis.curso_introduccion_apis_rest.exception.ResourceNotFoundException;
+import com.cursoapis.curso_introduccion_apis_rest.mapper.CategoryModelMapper;
+import com.cursoapis.curso_introduccion_apis_rest.dto.CategoryDTO;
 import com.cursoapis.curso_introduccion_apis_rest.entity.Category;
 import com.cursoapis.curso_introduccion_apis_rest.repositories.CategoryRepository;
 
@@ -14,15 +17,18 @@ import com.cursoapis.curso_introduccion_apis_rest.repositories.CategoryRepositor
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryModelMapper categoryModelMapper;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryModelMapper categoryModelMapper) {
         this.categoryRepository = categoryRepository;
+        this.categoryModelMapper = categoryModelMapper;
     }
 
     @Override
-    public Category findByName(String name) {
-        return categoryRepository.findByName(name)
+    public CategoryDTO findByName(String name) {
+        Category category = categoryRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "name", name));
+        return categoryModelMapper.toDTO(category);
     }
 
     @Override
@@ -31,11 +37,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category save(Category category) {
-        if (existsByName(category.getName())) {
-            throw new DuplicateResourceException("Category", "name", category.getName());
+    public CategoryDTO save(CategoryDTO categoryDTO) {
+        if (existsByName(categoryDTO.getName())) {
+            throw new DuplicateResourceException("Category", "name", categoryDTO.getName());
         }
-        return categoryRepository.save(category);
+        Category category = categoryModelMapper.toEntity(categoryDTO);
+        return categoryModelMapper.toDTO(categoryRepository.save(category));
     }
 
     @Override
@@ -46,22 +53,27 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
+    public List<CategoryDTO> findAll() {
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream()
+                .map(categoryModelMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Category findById(Long id) {
-        return categoryRepository.findById(id)
+    public CategoryDTO findById(Long id) {
+        Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
+        return categoryModelMapper.toDTO(category);
     }
 
     @Override
-    public Category update(Long id, Category category) {
+    public CategoryDTO update(Long id, CategoryDTO categoryDTO) {
         Category categoryExist = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
-        categoryExist.setName(category.getName());
-        return categoryRepository.save(categoryExist);
+        categoryExist.setName(categoryDTO.getName());
+        Category savedCategory = categoryRepository.save(categoryExist);
+        return categoryModelMapper.toDTO(savedCategory);
     }
 
 }

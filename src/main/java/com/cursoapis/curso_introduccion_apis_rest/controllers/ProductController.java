@@ -2,8 +2,6 @@ package com.cursoapis.curso_introduccion_apis_rest.controllers;
 
 import com.cursoapis.curso_introduccion_apis_rest.dto.ProductDTO;
 import com.cursoapis.curso_introduccion_apis_rest.entity.IsActive;
-import com.cursoapis.curso_introduccion_apis_rest.entity.Product;
-import com.cursoapis.curso_introduccion_apis_rest.mapper.ProductMapper;
 import com.cursoapis.curso_introduccion_apis_rest.service.ProductService;
 
 import jakarta.validation.Valid;
@@ -26,38 +24,32 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductMapper productMapper;
 
-    public ProductController(ProductService productService, ProductMapper productMapper) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.productMapper = productMapper;
     }
 
     @GetMapping
     public ResponseEntity<List<ProductDTO>> findAll() {
-        List<ProductDTO> products = productService.findAll().stream()
-                .map(productMapper::toDTO)
-                .toList();
+        List<ProductDTO> products = productService.findAll();
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> findByIdProduct(@PathVariable Long id) {
-        Product product = productService.findByIdProduct(id);
-        return ResponseEntity.ok(productMapper.toDTO(product));
+        ProductDTO product = productService.findByIdProduct(id);
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping("/name/{name}")
     public ResponseEntity<ProductDTO> findByName(@PathVariable String name) {
-        Product product = productService.findByName(name);
-        return ResponseEntity.ok(productMapper.toDTO(product));
+        ProductDTO product = productService.findByName(name);
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping("/is-active/{isActive}")
     public ResponseEntity<List<ProductDTO>> findByIsActive(@PathVariable IsActive isActive) {
-        List<ProductDTO> products = productService.findByIsActive(isActive).stream()
-                .map(productMapper::toDTO)
-                .toList();
+        List<ProductDTO> products = productService.findByIsActive(isActive);
         if (products.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -66,27 +58,24 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductDTO> saveProduct(@Valid @RequestBody ProductDTO productDTO) {
-        Product product = productMapper.toEntity(productDTO);
-        Product productSaved = productService.saveProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productMapper.toDTO(productSaved));
+        ProductDTO productSaved = productService.saveProduct(productDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productSaved);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTO> updateProduct(
             @PathVariable Long id,
             @Valid @RequestBody ProductDTO productDTO) {
-        Product existingProduct = productService.findByIdProduct(id);
-        Product updatedProduct = productMapper.updateEntityFromDTO(existingProduct, productDTO);
-        Product savedProduct = productService.saveProduct(updatedProduct);
-        return ResponseEntity.ok(productMapper.toDTO(savedProduct));
+        ProductDTO updatedProduct = productService.updateProduct(id, productDTO);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     @PutMapping("/{id}/is-active")
     public ResponseEntity<ProductDTO> updateProductIsActive(
             @PathVariable Long id,
             @RequestBody IsActive isActive) {
-        Product product = productService.updateProductIsActive(id, isActive);
-        return ResponseEntity.ok(productMapper.toDTO(product));
+        ProductDTO product = productService.updateProductIsActive(id, isActive);
+        return ResponseEntity.ok(product);
     }
 
     @DeleteMapping("/{id}")

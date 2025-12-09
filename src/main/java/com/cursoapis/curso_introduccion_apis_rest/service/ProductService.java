@@ -2,24 +2,24 @@ package com.cursoapis.curso_introduccion_apis_rest.service;
 
 import java.util.List;
 
+import com.cursoapis.curso_introduccion_apis_rest.dto.ProductDTO;
 import com.cursoapis.curso_introduccion_apis_rest.entity.IsActive;
-import com.cursoapis.curso_introduccion_apis_rest.entity.Product;
 
 public interface ProductService {
 
-    List<Product> findAll();
+    List<ProductDTO> findAll();
 
-    Product findByName(String name);
+    ProductDTO findByName(String name);
 
-    Product findByIdProduct(Long id);
+    ProductDTO findByIdProduct(Long id);
 
-    List<Product> findByIsActive(IsActive isActive);
+    List<ProductDTO> findByIsActive(IsActive isActive);
 
-    Product saveProduct(Product product);
+    ProductDTO saveProduct(ProductDTO product);
 
-    Product updateProduct(Long id, Product product);
+    ProductDTO updateProduct(Long id, ProductDTO product);
 
-    Product updateProductIsActive(Long id, IsActive isActive);
+    ProductDTO updateProductIsActive(Long id, IsActive isActive);
 
     void deleteProduct(Long id);
 }

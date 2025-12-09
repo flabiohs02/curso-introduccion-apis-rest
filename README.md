@@ -18,6 +18,8 @@ API REST desarrollada con Spring Boot para gestión de productos y categorías.
 ```
 src/main/java/com/cursoapis/curso_introduccion_apis_rest/
 ├── CursoIntroduccionApisRestApplication.java   # Clase principal
+├── config/                                      # Configuraciones
+│   └── ModelMapperConfig.java
 ├── controllers/                                 # Controladores REST
 │   ├── ProductController.java
 │   └── CategoryController.java
@@ -34,8 +36,10 @@ src/main/java/com/cursoapis/curso_introduccion_apis_rest/
 │   ├── DuplicateResourceException.java
 │   └── ErrorResponse.java
 ├── mapper/                                      # Conversores DTO ↔ Entity
+│   ├── CategoryMapper.java
+│   ├── CategoryModelMapper.java
 │   ├── ProductMapper.java
-│   └── CategoryMapper.java
+│   └── ProductModeMapper.java
 ├── repositories/                                # Repositorios JPA
 │   ├── ProductRepository.java
 │   └── CategoryRepository.java

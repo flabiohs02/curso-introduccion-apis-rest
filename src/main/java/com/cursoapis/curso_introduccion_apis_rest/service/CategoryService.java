@@ -2,22 +2,22 @@ package com.cursoapis.curso_introduccion_apis_rest.service;
 
 import java.util.List;
 
-import com.cursoapis.curso_introduccion_apis_rest.entity.Category;
+import com.cursoapis.curso_introduccion_apis_rest.dto.CategoryDTO;
 
 public interface CategoryService {
 
-    Category findByName(String name);
+    CategoryDTO findByName(String name);
 
     boolean existsByName(String name);
 
-    Category save(Category category);
+    CategoryDTO save(CategoryDTO categoryDTO);
 
     void delete(Long id);
 
-    List<Category> findAll();
+    List<CategoryDTO> findAll();
 
-    Category findById(Long id);
+    CategoryDTO findById(Long id);
 
-    Category update(Long id, Category category);
+    CategoryDTO update(Long id, CategoryDTO categoryDTO);
 
 }
